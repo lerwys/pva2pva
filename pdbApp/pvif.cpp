@@ -215,16 +215,20 @@ struct pvArray : public pvCommon {
 
 struct metaTIME {
     DBRstatus
+    DBRamsg
     DBRtime
+    DBRutag
 
-    enum {mask = DBR_STATUS | DBR_TIME};
+    enum {mask = DBR_STATUS | DBR_AMSG | DBR_TIME | DBR_UTAG};
 };
 
 struct metaDOUBLE {
     DBRstatus
+    DBRamsg
     DBRunits
     DBRprecision
     DBRtime
+    DBRutag
     DBRgrDouble
     DBRctrlDouble
     DBRalDouble
@@ -232,12 +236,14 @@ struct metaDOUBLE {
     // similar junk
     DBRenumStrs
 
-    enum {mask = DBR_STATUS | DBR_UNITS | DBR_PRECISION | DBR_TIME | DBR_GR_DOUBLE | DBR_CTRL_DOUBLE | DBR_AL_DOUBLE};
+    enum {mask = DBR_STATUS | DBR_AMSG | DBR_UNITS | DBR_PRECISION | DBR_TIME | DBR_UTAG | DBR_GR_DOUBLE | DBR_CTRL_DOUBLE | DBR_AL_DOUBLE};
 };
 
 struct metaENUM {
     DBRstatus
+    DBRamsg
     DBRtime
+    DBRutag
     DBRenumStrs
 
     // similar junk
@@ -247,12 +253,14 @@ struct metaENUM {
     DBRctrlDouble
     DBRalDouble
 
-    enum {mask = DBR_STATUS | DBR_TIME | DBR_ENUM_STRS};
+    enum {mask = DBR_STATUS | DBR_AMSG | DBR_TIME | DBR_UTAG | DBR_ENUM_STRS};
 };
 
 struct metaSTRING {
     DBRstatus
+    DBRamsg
     DBRtime
+    DBRutag
 
     // similar junk
     DBRenumStrs
@@ -262,7 +270,7 @@ struct metaSTRING {
     DBRctrlDouble
     DBRalDouble
 
-    enum {mask = DBR_STATUS | DBR_TIME};
+    enum {mask = DBR_STATUS | DBR_AMSG | DBR_TIME | DBR_UTAG};
 };
 
 void attachTime(pvTimeAlarm& pvm, const pvd::PVStructurePtr& pv)
