@@ -50,7 +50,10 @@ static pvd::ScalarType to_pvd_type(epicsEnum16 type)
 #undef CASE_SKIP_BOOL
 #undef CASE_REAL_INT64
 #undef CASE
-    // not supporting ENUM or STRING
+    // STRING is special
+    case DBF_STRING: return pvd::pvString;
+
+    // not supporting ENUM
     default:
         throw std::runtime_error("not supported");
     }
@@ -250,7 +253,20 @@ long readLocked(struct link *pinp, void *raw)
 
             if (!status) {
                 temp.resize(nelem*esize);
-                arr = pvd::static_shared_vector_cast<const void>(pvd::freeze(temp));
+
+                if (stype == pvd::pvString) {
+                    // ugh, copy *again*
+                    pvd::shared_vector<std::string> temp_str;
+                    temp_str.reserve(nelem);
+
+                    for (long i = 0; i < nelem; ++i)
+                        temp_str.push_back(temp.data() + i*esize); // Assume NUL-terminated
+
+                    arr = pvd::static_shared_vector_cast<const void>(pvd::freeze(temp_str));
+                } else {
+                    arr = pvd::static_shared_vector_cast<const void>(pvd::freeze(temp));
+                }
+
                 arr.set_original_type(stype);
             }
         } catch(std::exception& e) {

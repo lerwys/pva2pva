@@ -19,6 +19,13 @@ record(svectorin, "INC") {
     field(PINI, "YES")
 }
 
+record(waveform, "IND") {
+    field(FTVL, "STRING")
+    field(NELM, "2")
+    field(INP,  {const:["First","Second"]})
+    field(PINI, "YES")
+}
+
 record(tableAgg, "TABLE") {
     field(INPA, "INA")
     field(FNAA, "col1")
@@ -27,12 +34,17 @@ record(tableAgg, "TABLE") {
     field(INPB, "INB")
     field(FNAB, "col2")
     field(LABB, "Two")
-    field(FTB,  "CHAR")
+    field(FTB,  "LONG")
 
     field(INPC, "INC")
     field(FNAC, "col3")
     field(LABC, "Three")
     field(FTC,  "SHORT")
+
+    field(INPD, "IND")
+    field(FNAD, "col4")
+    field(LABD, "Four")
+    field(FTD,  "STRING")
 
     # The following should be ignored
     field(INPF, "BOGUS")

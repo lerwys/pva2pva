@@ -24,6 +24,24 @@ namespace {
 
 namespace pvd = epics::pvData;
 
+template<typename T>
+void testVector(const pvd::PVStructurePtr & value, const std::string & fname, size_t n, const T* expected) {
+    pvd::PVScalarArrayPtr ptr = value->getSubFieldT<pvd::PVScalarArray>(fname);
+    pvd::shared_vector<const T> actual;
+    pvd::shared_vector<T> exp;
+
+    exp.reserve(n);
+    for (size_t i = 0; i < n; ++i)
+        exp.push_back(expected[i]);
+
+    ptr->getAs(actual);
+
+    std::stringstream ss;
+    ss << fname << ": " << actual << " == " << exp;
+
+    testOk(actual == exp, "%s", ss.str().c_str());
+}
+
 void testGetPut()
 {
     // Get handles to record
@@ -46,10 +64,12 @@ void testGetPut()
 
     // Check that the names of the columns are being correctly set
     const pvd::StringArray & cols = (*sval.value)->getFieldT<pvd::Structure>("value")->getFieldNames();
-    testOk1(cols.size()==3);
-    testOk1(cols.at(0)=="col1");
-    testOk1(cols.at(1)=="col2");
-    testOk1(cols.at(2)=="col3");
+    std::vector<std::string> exp_cols;
+    exp_cols.push_back("col1");
+    exp_cols.push_back("col2");
+    exp_cols.push_back("col3");
+    exp_cols.push_back("col4");
+    testOk1(cols==exp_cols);
 
     // Fetch PVStructure
     VSharedPVStructure val;
@@ -60,58 +80,33 @@ void testGetPut()
     testOk1(!dbGetField(&addr, DBR_VFIELD, &val, 0, 0, 0));
 
     // Check that the labels are being correctly set
-    pvd::PVStringArrayPtr labels_ptr = (*val.value)->getSubFieldT<pvd::PVStringArray>("labels");
-    pvd::shared_vector<const std::string> labels = labels_ptr->view();
-    testOk1(labels.size()==3);
-    testOk1(labels.at(0)=="One");
-    testOk1(labels.at(1)=="Two");
-    testOk1(labels.at(2)=="Three");
+    const std::string labels[] = {"One", "Two", "Three", "Four"};
+    testVector(*val.value, "labels", NELEMENTS(labels), labels);
 
-    // Check values for first column
-    pvd::PVScalarArrayPtr col1_ptr = (*val.value)->getSubFieldT<pvd::PVScalarArray>("value.col1");
-    pvd::shared_vector<const double> col1;
-    col1_ptr->getAs(col1);
-    testOk1(col1.size()==3);
-    testOk1(col1.at(0)==1);
-    testOk1(col1.at(1)==2);
-    testOk1(col1.at(2)==3);
+    // Check column values
+    const double col1[] = {1, 2, 3};
+    testVector(*val.value, "value.col1", NELEMENTS(col1), col1);
 
-    // Check values for second column
-    pvd::PVScalarArrayPtr col2_ptr = (*val.value)->getSubFieldT<pvd::PVScalarArray>("value.col2");
-    pvd::shared_vector<const pvd::int8> col2;
-    col2_ptr->getAs(col2);
-    testOk1(col2.size()==4);
-    testOk1(col2.at(0)==4);
-    testOk1(col2.at(1)==3);
-    testOk1(col2.at(2)==2);
-    testOk1(col2.at(3)==1);
+    const pvd::int32 col2[] = {4, 3, 2, 1};
+    testVector(*val.value, "value.col2", NELEMENTS(col2), col2);
 
-    // Check values for third column
-    pvd::PVScalarArrayPtr col3_ptr = (*val.value)->getSubFieldT<pvd::PVScalarArray>("value.col3");
-    pvd::shared_vector<const pvd::int16> col3;
-    col3_ptr->getAs(col3);
-    testOk1(col3.size()==3);
-    testOk1(col3.at(0)==7);
-    testOk1(col3.at(1)==8);
-    testOk1(col3.at(2)==9);
+    const pvd::int16 col3[] = {7, 8, 9};
+    testVector(*val.value, "value.col3", NELEMENTS(col3), col3);
+
+    const std::string col4[] = {"First", "Second"};
+    testVector(*val.value, "value.col4", NELEMENTS(col4), col4);
 }
 
 }
 
 MAIN(testtable)
 {
-    testPlan(0);
+    testPlan(9);
     testdbPrepare();
     testdbReadDatabase("tableTestIoc.dbd", 0, 0);
     tableTestIoc_registerRecordDeviceDriver(pdbbase);
 
-    std::stringstream macros;
-    macros << "NELM=" << NELM;
-    macros << ",FTVLA=DOUBLE,FNAA=col1,LABA=Column One";
-    macros << ",FTVLB=DOUBLE,FNAB=col2,LABB=Column Two";
-    macros << ",FTVLC=DOUBLE,FNAC=col3,LABC=Column Three";
-
-    testdbReadDatabase("testtable.db", 0, macros.str().c_str());
+    testdbReadDatabase("testtable.db", 0, 0);
 
     eltc(0);
     testIocInitOk();
