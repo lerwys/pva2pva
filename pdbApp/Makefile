@@ -109,12 +109,12 @@ softIocPVA_LIBS += $(EPICS_BASE_IOC_LIBS)
 DBD += softIocPVA.dbd
 DBD += qsrv.dbd
 
-qsrv_DBD += qsrv-common.dbd
+qsrv_pieces += ../qsrv-common.dbd
 ifdef BASE_3_16
-qsrv_DBD += qsrv-lset.dbd
+qsrv_pieces += ../qsrv-lset.dbd
 endif
 ifeq (YES,$(HAS_DBR_VFIELD))
-qsrv_DBD += qsrv-vfield.dbd
+qsrv_pieces += ../qsrv-vfield.dbd
 endif
 
 ifneq ($(FINAL_LOCATION),$(EPICS_BASE))
@@ -168,3 +168,10 @@ $(COMMON_DIR)/multiArrayCommon.h: ../multiArrayCommonRecord.dbd ../multiArrayCom
 	@$(RM) $(notdir $@)
 	$(DBTORECORDTYPEH) $(DBDFLAGS) -o $(notdir $@) $<
 	@$(MV) $(notdir $@) $@
+
+qsrv.dbd$(DEP): $(qsrv_pieces)
+	@$(RM) $@
+	@echo "$(COMMONDEP_TARGET): ../Makefile" > $@
+
+$(COMMON_DIR)/qsrv.dbd: $(qsrv_pieces)
+	$(CAT) $^ > $@
