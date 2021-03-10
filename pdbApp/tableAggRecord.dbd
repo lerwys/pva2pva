@@ -71,7 +71,7 @@ recordtype(tableAgg) {
     field(FNAV,DBF_STRING) { prompt("Field Name V") promptgroup("43 - Input Q-X") special(SPC_NOMOD) interest(1) size(41) }
     field(FNAW,DBF_STRING) { prompt("Field Name W") promptgroup("43 - Input Q-X") special(SPC_NOMOD) interest(1) size(41) }
     field(FNAX,DBF_STRING) { prompt("Field Name X") promptgroup("43 - Input Q-X") special(SPC_NOMOD) interest(1) size(41) }
-    field(FNAY,DBF_STRING) { prompt("Field Labe Y") promptgroup("44 - Input Y-Z") special(SPC_NOMOD) interest(1) size(41) }
+    field(FNAY,DBF_STRING) { prompt("Field Name Y") promptgroup("44 - Input Y-Z") special(SPC_NOMOD) interest(1) size(41) }
     field(FNAZ,DBF_STRING) { prompt("Field Name Z") promptgroup("44 - Input Y-Z") special(SPC_NOMOD) interest(1) size(41) }
     field(LABA,DBF_STRING) { prompt("Field Label A") promptgroup("41 - Input A-H") special(SPC_NOMOD) interest(1) size(41) }
     field(LABB,DBF_STRING) { prompt("Field Label B") promptgroup("41 - Input A-H") special(SPC_NOMOD) interest(1) size(41) }
