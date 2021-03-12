@@ -144,7 +144,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache
-        key: ${{ matrix.base }}/${{ matrix.os }}/${{ matrix.cmp }}/${{ matrix.configuration }}/${{ matrix.wine }}${{ matrix.rtems }}/${{ matrix.extra }}
+        key: ${{ matrix.base }}/${{ matrix.os }}/${{ matrix.cmp }}/${{ matrix.configuration }}/${{ matrix.wine }}${{ matrix.rtems }}/${{ matrix.extra }}/1
     - name: "apt-get install"
       run: |
         sudo apt-get update
