@@ -35,6 +35,7 @@ DBDINC += columnarinRecord
 DBDINC += columnaroutRecord
 DBDINC += statBinRecord
 DBDINC += ndainRecord
+DBDINC += ndaroiRecord
 DBDINC += tableAggRecord
 DBDINC += multiArrayCommon
 
@@ -85,6 +86,7 @@ qsrv_SRCS += columnaroutRecord.cpp
 
 qsrv_SRCS += statBinRecord.cpp
 qsrv_SRCS += ndainRecord.cpp
+qsrv_SRCS += ndaroiRecord.cpp
 qsrv_SRCS += tableAggRecord.cpp
 
 qsrv_SRCS += multiArrayCommon.cpp
@@ -142,6 +144,7 @@ $(COMMON_DIR)/softIocPVA.dbd: ../columnarinRecord.dbd
 $(COMMON_DIR)/softIocPVA.dbd: ../columnaroutRecord.dbd
 $(COMMON_DIR)/softIocPVA.dbd: ../statBinRecord.dbd
 $(COMMON_DIR)/softIocPVA.dbd: ../ndainRecord.dbd
+$(COMMON_DIR)/softIocPVA.dbd: ../ndaroiRecord.dbd
 $(COMMON_DIR)/softIocPVA.dbd: ../tableAggRecord.dbd
 $(COMMON_DIR)/softIocPVA.dbd: $(COMMON_DIR)/qsrv.dbd
 

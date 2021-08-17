@@ -24,7 +24,7 @@ recordtype(ndaroi) {
     %#endif
     %typedef struct ndaroidset {
     %    dset common; /*init_record returns: (-1,0)=>(failure,success)*/
-    %    long (*read_ndarray)(struct ndaroiRecord *prec); /*returns: (-1,0)=>(failure,success)*/
+    %    long (*read_pvs)(struct ndaroiRecord *prec); /*returns: (-1,0)=>(failure,success)*/
     %} ndaroidset;
     %#define HAS_ndaroidset
     %struct ndaroiPvt;
@@ -32,13 +32,18 @@ recordtype(ndaroi) {
     %}
     %#endif
     field(VAL,DBF_NOACCESS) {
-        prompt("Pixel array")
+        prompt("NTNDArray image")
         promptgroup("40 - Input")
         asl(ASL0)
         pp(TRUE)
         special(SPC_DBADDR)
-        #extra("::epics::pvData::shared_vector<const void> val")
         extra("::epics::pvData::PVStructurePtr val")
+    }
+    field(PTYP,DBF_NOACCESS) {
+        prompt("Type")
+        interest(3)
+        special(SPC_DBADDR)
+        extra("::epics::pvData::StructureConstPtr ptyp")
     }
     field(INP,DBF_INLINK) {
         prompt("Input Specification")
@@ -53,13 +58,21 @@ recordtype(ndaroi) {
     }
     field(XMIN, DBF_ULONG){
         prompt("First pixel in X dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INXMIN, DBF_INLINK) {
+        prompt("Read first pixel in X dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(XSIZE, DBF_ULONG){
         prompt("Size of ROI in the X dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INXSIZE, DBF_INLINK) {
+        prompt("Read size of ROI in the X dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(YENA, DBF_MENU){
         prompt("Enable ROI for Y dimension")
@@ -69,13 +82,21 @@ recordtype(ndaroi) {
     }
     field(YMIN, DBF_ULONG){
         prompt("First pixel in Y dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INYMIN, DBF_INLINK) {
+        prompt("Read first pixel in the Y dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(YSIZE, DBF_ULONG){
         prompt("Size of ROI in the Y dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INYSIZE, DBF_INLINK) {
+        prompt("Read size of ROI in the Y dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(ZENA, DBF_MENU){
         prompt("Enable ROI for Y dimension")
@@ -85,13 +106,21 @@ recordtype(ndaroi) {
     }
     field(ZMIN, DBF_ULONG){
         prompt("First pixel in Z dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INZMIN, DBF_INLINK) {
+        prompt("Read first pixel in the Z dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(ZSIZE, DBF_ULONG){
         prompt("Size of ROI in the Z dimension")
-        interest(2)
+        interest(3)
+    }
+    field(INZSIZE, DBF_INLINK) {
+        prompt("Read size of ROI in the Z dimension")
         promptgroup("40 - Input")
+        interest(3)
     }
     field(COL, DBF_MENU) {
         prompt("Color Mode")
@@ -107,10 +136,6 @@ recordtype(ndaroi) {
     field(RPVT, DBF_NOACCESS) {
         extra("struct ndaroiPvt *rpvt")
     }
-    field(ROOT,DBF_NOACCESS) {
-        special(SPC_NOMOD)
-        extra("::epics::pvData::PVStructurePtr root")
-    }
     field(CHG,DBF_NOACCESS) {
         special(SPC_NOMOD)
         extra("::epics::pvData::BitSet chg")
@@ -121,4 +146,4 @@ recordtype(ndaroi) {
     }
 }
 
-device(ndaroi, CONSTANT, devNDARoiSoft, "Soft Channel")
+device(ndaroi, CONSTANT, devNDAROISoft, "Soft Channel")
