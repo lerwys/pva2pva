@@ -14,6 +14,7 @@ Device support for these record types must be written in C++.
 - statBin
 - pvstructin
 - tableAgg
+- ndaroi
 
 All of these record types provide custom device support (dset)
 struct definitions.  eg. 'struct svectorindset'
@@ -232,5 +233,26 @@ record(tableAgg, "my:table") {
 
 When processed, the default device support will read each INPx field and populate the corresponding
 value with the obtained array.
+
+@section qsrv_ndaroi ndaroi record type
+
+The ndaroi record is the analog of the areaDetector plugin NDPluginROI. It performs
+a ROI in a NTNDArray PVstrucuture, typically stored inside a ndain record.
+
+Currently, it supports only Gray scale images, with the ROI dimensions specified
+by the fields:
+
+XMIN and XSIZE specifies the X offset and the horizontal size of the ROI, respectively
+
+YMIN and YSIZE specifies the Y offset and the vertical size of the ROI, respectively
+
+ZMIN and ZSIZE specifies the color offset and the color size of the ROI, respectively (unsupported for now)
+
+@subsection qsrv_ndaroi_softchannel ndaroi default device support
+
+During initialization, the default device support for ndaroi will read a Structure from
+the INP field and then proceed to read the PVStructure from the input record.
+
+Type changes after the first record processing are unsupported for now.
 
 */
