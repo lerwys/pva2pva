@@ -1,0 +1,23 @@
+record(ndain, "$(N):Array") {
+    field(DTYP, "QSRV Demo")
+    field(W,    "1024")
+    field(H,    "768")
+    field(PINI, "YES")
+    field(SCAN, "1 second")
+    field(FLNK, "$(N):ArrayROI")
+}
+
+record(ndaroi, "$(N):ArrayROI") {
+    field(DTYP,   "Soft Channel")
+    field(INP,    "$(N):Array")
+    field(XMIN,   "0")
+    field(XSIZE,  "100")
+    field(YMIN,   "0")
+    field(YSIZE,  "100")
+    field(FLNK,   "$(N):ArrayROIStat")
+}
+
+record(statBin, "$(N):ArrayROIStat") {
+    field(INP,  "$(N):ArrayROI NPP")
+    field(TSEL, "$(N):ArrayROI.TIME NPP")
+}
