@@ -1,4 +1,4 @@
-#!../../bin/linux-x86_64-debug/softIocPVA
+#!../../bin/linux-x86_64/softIocPVA
 
 dbLoadRecords("image.db","N=TST:image1")
 dbLoadRecords("ndain.db","N=TST:image2")
