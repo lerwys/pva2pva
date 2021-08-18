@@ -306,12 +306,12 @@ long readValue(ndaroiRecord *prec, ndaroidset *pdset)
         // convert to new dimensions
         convert(prec, new_dims);
 
-            /* Post events if dimensions changed */
-            FOREACH(ndaroiPvt::vecType::iterator, it, end, prec->rpvt->origDims) {
-                FOREACH(ndaroiPvt::mapType::iterator, it2, end2, *it) {
-                    if (it2->second->val != *it2->second->fld)
-                        db_post_events(prec, it2->second->fld, DBE_VALUE|DBE_ARCHIVE);
-                }
+        /* Post events if dimensions changed */
+        FOREACH(ndaroiPvt::vecType::iterator, it, end, prec->rpvt->origDims) {
+            FOREACH(ndaroiPvt::mapType::iterator, it2, end2, *it) {
+                if (it2->second->val != *it2->second->fld)
+                    db_post_events(prec, it2->second->fld, DBE_VALUE|DBE_ARCHIVE);
+            }
         }
 
         if(oldID != prec->id) {
