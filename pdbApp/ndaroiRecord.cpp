@@ -394,8 +394,16 @@ long process(struct dbCommon *pcommon)
     prec->pact = TRUE;
     recGblGetTimeStamp(prec);
 
-    /* check event list */
-    monitor(prec);
+    try {
+        /* check event list */
+        monitor(prec);
+    }
+    catch (std::exception& e) {
+        errlogPrintf("%s: process: %s\n", prec->name, e.what());
+        recGblSetSevrMsg(prec, READ_ALARM, INVALID_ALARM, "process: %s", e.what());
+        return S_db_badField;
+    }
+
     /* process the forward scan link record */
     recGblFwdLink(prec);
 
