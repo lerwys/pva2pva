@@ -276,8 +276,11 @@ long readValue(ndaroiRecord *prec, ndaroidset *pdset)
     // read pvstructure
     status = pdset->read_pvs(prec);
 
+    if(status)
+        return status;
+
     // type change
-    if(!status && prec->val && prec->val->getStructure() != prec->ptyp) {
+    if(prec->val && prec->val->getStructure() != prec->ptyp) {
         prec->ptyp = prec->val->getStructure();
     }
 
@@ -530,23 +533,13 @@ rset ndaroiRSET={
     put_vfield,
 };
 
-long readInitialPVStructure(struct link *pinp, void *raw)
+long readStructure(struct link *pinp, pvd::StructureConstPtr& type)
 {
-    ndaroiRecord *prec = (ndaroiRecord *) pinp->precord;
-    pvd::StructureConstPtr type;
-
     VSharedStructure ival;
     ival.vtype = &vfStructure;
     ival.value = &type;
 
-    long status = dbGetLink(pinp, DBR_VFIELD, &ival, 0, 0);
-
-    if (status)
-        return status;
-
-    prec->val = pvd::getPVDataCreate()->createPVStructure(type);
-
-    return 0;
+    return dbGetLink(pinp, DBR_VFIELD, &ival, 0, 0);
 }
 
 long readLocked(struct link *pinp, void *raw)
@@ -561,8 +554,23 @@ long readLocked(struct link *pinp, void *raw)
 
     long status = *doload ? dbLoadLink(pinp, DBR_VFIELD, &ival) : dbGetLink(pinp, DBR_VFIELD, &ival, 0, 0);
 
-    if (status)
+    if (*doload && status)
         return status;
+    else if (status) {
+        // dbGetLink might fail because of different Structure. For now, consider
+        // all errors this and try again.
+        pvd::StructureConstPtr type;
+        status = readStructure(pinp, type);
+
+        if (status)
+            return status;
+
+        prec->val = pvd::getPVDataCreate()->createPVStructure(type);
+        status = dbGetLink(pinp, DBR_VFIELD, &ival, 0, 0);
+
+        if (status)
+            return status;
+    }
 
     if (dbLinkIsConstant(&prec->tsel) &&
         prec->tse == epicsTimeEventDeviceTime)
@@ -574,15 +582,22 @@ long readLocked(struct link *pinp, void *raw)
 long init_record(struct dbCommon *pcommon)
 {
     ndaroiRecord *prec = (ndaroiRecord *)pcommon;
+    long status = 0;
     bool doload = true;
 
     if (readLocked(&prec->inp, &doload)) {
         // try to get at least Structure from link
-        readInitialPVStructure(&prec->inp, 0);
+        pvd::StructureConstPtr type;
+        status = readStructure(&prec->inp, type);
+
+        if (status)
+            return status;
+
+        prec->val = pvd::getPVDataCreate()->createPVStructure(type);
         prec->udf = FALSE;
     }
 
-    return 0;
+    return status;
 }
 
 long read_pvs(ndaroiRecord* prec)
