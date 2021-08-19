@@ -35,6 +35,12 @@ recordtype(statBin) {
     field(DEC, DBF_ULONG) {
         prompt("Decimation factor")
     }
+    field(START, DBF_ULONG) {
+        prompt("Start offset inside the input vector")
+    }
+    field(STEP, DBF_ULONG) {
+        prompt("Step to jump inside the input vector")
+    }
 }
 
 device(statBin, CONSTANT, devSBSoft, "Soft Channel")

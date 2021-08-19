@@ -72,10 +72,14 @@ long statBinConsumeIt(struct statBinRecord *prec, const void* raw, size_t nelem)
         return S_db_notInit;
 
     const T* arr = static_cast<const T*>(raw);
-    size_t dec = prec->dec ? prec->dec : nelem;
+    size_t start = prec->start < nelem ? prec->start : nelem;
+    size_t step = prec->step ? (prec->step < nelem ? prec->step : nelem) : 1;
+    size_t new_nelem = (nelem-start+step-1)/step;
 
-    size_t nbins = nelem/dec;
-    if(nelem%dec)
+    size_t dec = prec->dec ? prec->dec : new_nelem;
+
+    size_t nbins = new_nelem/dec;
+    if(new_nelem%dec)
         nbins++;
 
     pvd::shared_vector<double> mean(nbins),
@@ -84,7 +88,7 @@ long statBinConsumeIt(struct statBinRecord *prec, const void* raw, size_t nelem)
                                max(nbins),
                                idx(nbins);
 
-    for(size_t i=0, n=0u; n<nbins && i<nelem; n++) {
+    for(size_t i=start, n=0u; n<nbins && i<nelem; n++) {
         idx[n] = i;
 
         double e = arr[i],
@@ -93,9 +97,9 @@ long statBinConsumeIt(struct statBinRecord *prec, const void* raw, size_t nelem)
                bsum = e,
                bsum2= e*e;
         size_t cnt = 1u;
-        i++;
+        i+=step;
 
-        for(; cnt<dec && i<nelem; i++, cnt++) {
+        for(; cnt<dec && i<nelem; i+=step, cnt++) {
             e = arr[i];
 
             if(bmin > e)
